@@ -567,7 +567,7 @@ RCT_EXPORT_METHOD(playTrack:(NSDictionary *)trackItem callback:(RCTResponseSende
     }
 }
 
-RCT_EXPORT_METHOD(playTracks:(NSArray *)tracks successCallback:(RCTResponseSenderBlock)successCallback) {
+RCT_EXPORT_METHOD(playTracks:(NSArray *)tracks useSystemPlayer:(BOOL)useSystemPlayer successCallback:(RCTResponseSenderBlock)successCallback) {
     NSLog(@"%@ %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
     
     NSMutableArray *playlist = [[NSMutableArray alloc] initWithCapacity:0];
@@ -599,12 +599,18 @@ RCT_EXPORT_METHOD(playTracks:(NSArray *)tracks successCallback:(RCTResponseSende
         return;
     }
     
-    MPMusicPlayerController *musicPlayer = [MPMusicPlayerController systemMusicPlayer];
+    
+    MPMusicPlayerController *musicPlayer = nil;
+    if(useSystemPlayer){
+        musicPlayer = [MPMusicPlayerController systemMusicPlayer];
+    }else{
+        musicPlayer = [MPMusicPlayerController applicationMusicPlayer];
+    }
     MPMediaItemCollection *currentQueue = [[MPMediaItemCollection alloc] initWithItems:playlist];
     MPMediaItem *nowPlaying = [[currentQueue items] objectAtIndex:0];
     [musicPlayer setQueueWithItemCollection:currentQueue];
     [musicPlayer setNowPlayingItem:nowPlaying];
-    
+    [musicPlayer prepareToPlay];
     [musicPlayer play];
     
     successCallback(@[[NSNull null]]);

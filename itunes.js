@@ -91,7 +91,7 @@ module.exports = {
 		});
 	},
 
-	playTracks: function(trackItems) {
+	playTracks: function(trackItems, useSystemPlayer) {
 		return new Promise((resolve, reject) => {
 			if (Array.isArray(trackItems) === false || trackItems.length === 0) {
 				reject("No track item have been found");
@@ -105,7 +105,7 @@ module.exports = {
 					"All track items should have [title] and [albumTitle] properties"
 				);
 			}
-			RNiTunes.playTracks(trackItems || [], err => {
+			RNiTunes.playTracks(trackItems || [], useSystemPlayer, err => {
 				if (!err) {
 					resolve();
 				} else {
